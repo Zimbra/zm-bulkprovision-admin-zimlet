@@ -5,7 +5,7 @@ function ZaBulkProvisionWizard (parent, app) {
         w = "600px" ;
     }
     ZaXWizardDialog.call(this, parent, app, null, com_zimbra_bulkprovision.BP_Wizard_title,
-                                w, "300px","ZaBulkProvisionWizard");
+                                w, (AjxEnv.isIE ? "330px" :"320px"),"ZaBulkProvisionWizard");
 
 	this.stepChoices = [
 		{label:com_zimbra_bulkprovision.BP_Wizard_upload, value:ZaBulkProvisionWizard.STEP_UPLOAD_CSV},
@@ -19,13 +19,7 @@ function ZaBulkProvisionWizard (parent, app) {
     this.initForm(ZaBulkProvision.getMyXModel(),this.getMyXForm());
 
 	this._localXForm.setController(this._app);
-    /*
-    this._localXForm.addListener(DwtEvent.XFORMS_FORM_DIRTY_CHANGE,
-            new AjxListener(this, ZaBulkProvisionWizard.prototype.handleXFormChange));
-	this._localXForm.addListener(DwtEvent.XFORMS_VALUE_ERROR,
-            new AjxListener(this, ZaBulkProvisionWizard.prototype.handleXFormChange));
-	 */
-	this._helpURL = ZaBulkProvisionWizard.helpURL;
+  	this._helpURL = ZaBulkProvisionWizard.helpURL;
 }
 
 // -1 : No status, 0: Install succeed, >0 : Install Failed (different number is different error)
@@ -41,109 +35,18 @@ ZaBulkProvisionWizard.prototype.constructor = ZaBulkProvisionWizard;
 ZaXDialog.XFormModifiers["ZaBulkProvisionWizard"] = new Array();
 ZaBulkProvisionWizard.helpURL = location.pathname + "help/admin/html/tools/bulk_provisioning.htm?locid=" + AjxEnv.DEFAULT_LOCALE;
 
-/*
-ZaBulkProvisionWizard.prototype.handleXFormChange =
-function () {
-	var cStep = this._containedObject[ZaModel.currentStep] ;
-	if(this._localXForm.hasErrors()) {
-		this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(false);
-	} else {
-		if (cStep == ZaBulkProvisionWizard.STEP_UPLOAD_CSV) {
-			if (this._containedObject[ZaCert.A_target_server]) {
-				this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled (true) ;
-			}
-		}
-
-		if (cStep == ZaBulkProvisionWizard.STEP_INSTALL_CERT ) {
-			this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(true);
-		}
-
-		if (cStep == ZaBulkProvisionWizard.STEP_SUMMARY ) {
-			this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(true);
-			this._button[DwtWizardDialog.FINISH_BUTTON].setText(AjxMsg._finish);
-		}
-
-		if (this._containedObject[ZaCert.A_type_csr]) {
-			this._button[DwtWizardDialog.FINISH_BUTTON].setText(AjxMsg._finish);
-		}else{
-			this._button[DwtWizardDialog.FINISH_BUTTON].setText(com_zimbra_bulkprovision.CERT_INSTALL_BUTTON_text);
-		}
-	}
-}   */
-/*
-ZaBulkProvisionWizard.getInstallMsg =
-function () {
-	if (ZaBulkProvisionWizard.INSTALL_STATUS == 0) {
-		return com_zimbra_bulkprovision.CERT_INSTALL_STATUS_0 ;
-	}else if (ZaBulkProvisionWizard.INSTALL_STATUS == 1){
-		return com_zimbra_bulkprovision.CERT_INSTALL_STATUS_1;
-	}else{
-		return "";
-	}
-}   */
-
 /**
 * Overwritten methods that control wizard's flow (open, go next,go previous, finish)
 **/
 
 ZaBulkProvisionWizard.prototype.popup =
 function (loc) {
-	ZaXWizardDialog.prototype.popup.call(this, loc);
-	/*
-    if (this._containedObject[ZaCert.A_csv]) {
-		this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(true);
-	}else{
-		this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
-	} */
+    ZaXWizardDialog.prototype.popup.call(this, loc);
 
 	this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(false);
 	this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(false);
 }
 
-
-/*
-ZaBulkProvisionWizard.prototype.finishWizard =
-function() {
-	try {
-		// Basically, it will do two things:
-		//1) install the cert
-		//2) Upon the successful install, the cert tab information will be updated
-		var instance = this._localXForm.getInstance () ;
-		var validationDays = instance[ZaCert.A_validation_days] ;
-
-		var selfType = instance[ZaCert.A_type_self] ;
-		var commType = instance[ZaCert.A_type_comm] ;
-		var csrType = instance[ZaCert.A_type_csr] ;
-
-		var contentElement =  null ;
-		if (selfType) {
-			type = ZaCert.A_type_self ;
-		}else if (commType) {
-			type = ZaCert.A_type_comm ;
-		}else if (csrType){
-			this.popdown();
-			return ;
-		}else{
-			throw new Exeption ("Unknow installation type") ;
-		}
-
-		var callback = new AjxCallback(this, this.installCallback);
-		var params = {
-			type: type,
-			validation_days: validationDays,
-			comm_cert: this.uploadResults,
-            subject: this._containedObject.attrs,
-            //allserver: (this._containedObject[ZaCert.A_target_server] == ZaCert.ALL_SERVERS) ? 1 : 0,
-			callback: callback
-		}
-		ZaCert.installCert (this._app, params, this._containedObject[ZaCert.A_target_server]  ) ;
-
-		this.popdown();
-
-	} catch (ex) {
-		this._app.getCurrentController()._handleException(ex, "ZaBulkProvisionWizard.prototype.finishWizard", null, false);
-	}
-} */
 
 ZaBulkProvisionWizard.prototype._uploadCallback =
 function (status, uploadResults) {
@@ -289,6 +192,7 @@ function() {
         var statusDialogCreatedAccounts =  this._provisionStatusObject [ZaBulkProvisionStatusDialog.A_createdAccounts] ;
         //statusDialog.setMessage(busyMsg) ;
         statusDialog.setObject( this._provisionStatusObject) ;
+      
         statusDialog.popup() ;
 
         var accounts = this._containedObject[ZaBulkProvision.A_provision_accounts] ;
@@ -306,6 +210,7 @@ function() {
 
             if (account[ZaBulkProvision.A2_isToProvision]) {
 
+                if (console) console.log("Creating acccount " + account.accountName) ;
                 var soapDoc = AjxSoapDoc.create("CreateAccountRequest", ZaZimbraAdmin.URN, null);
                 soapDoc.set(ZaAccount.A_name, account.accountName);
 //              we set the password using setPasswordRequest               
@@ -483,8 +388,8 @@ function (){
 	html[idx++] = "<div><table border=0 cellspacing=0 cellpadding=2 style='table-layout: fixed;'> " ;
 	//html[idx++] = "<colgroup><col width=50 /><col width='*' /><col width=50 /></colgroup>";
 
-	html[idx++] = "<tbody><tr><td>" + com_zimbra_bulkprovision.CSV_Upload_file + "</td>";
-	html[idx++] = "<td><input type=file  name='csvFile' size='40'></input></td></tr>";
+	html[idx++] = "<tbody><tr><td width=65>" + com_zimbra_bulkprovision.CSV_Upload_file + "</td>";
+	html[idx++] = "<td><input type=file  name='csvFile' size='45'></input></td></tr>";
 
 	html[idx++] = "</tbody></table></div>";
 
@@ -554,10 +459,15 @@ ZaBulkProvisionWizard.myXFormModifier = function(xFormObject) {
             },
             { type:_SPACER_ , height: 5 } ,
              //provision account lists
-            {ref:ZaBulkProvision.A_provision_accounts, type:_DWT_LIST_, height:"250", width:"525px",
-                forceUpdate: true, cssClass: "DLSource",
-                widgetClass: ZaBulkProvisionAccountsListView,
-                headerList:bpAccountsListHeader, hideHeader: false
+            {type:_GROUP_, colSpan: 2, numCols: 1,
+                items: [
+                    {ref:ZaBulkProvision.A_provision_accounts, type:_DWT_LIST_, height:(AjxEnv.isIE ? 270 : 260), width:525,
+                        forceUpdate: true,
+                        cssClass: "DLSource",
+                        widgetClass: ZaBulkProvisionAccountsListView,
+                        headerList:bpAccountsListHeader, hideHeader: false
+                        }
+                ]
             }
         ];
 
@@ -571,27 +481,21 @@ ZaBulkProvisionWizard.myXFormModifier = function(xFormObject) {
 			items :[
 				{ type:_OUTPUT_, value: com_zimbra_bulkprovision.summary_download },
 				{ type:_SPACER_ , height: 10 },
-				/*
-                { type:_OUTPUT_, value:"<a href='adminres?action=getBPSummary' onclick='ZaZimbraAdmin.unloadHackCallback();'> "
-										+ com_zimbra_bulkprovision.download_csv + "</a> "},
-				*/
-
-                { type:_OUTPUT_, ref: ZaBulkProvision.A_csv_aid, getDisplayValue: function (newValue) {
+			    { type:_OUTPUT_, ref: ZaBulkProvision.A_csv_aid, getDisplayValue: function (newValue) {
                         return "<a target='_blank' href='/service/afd/?action=getBP&aid=" + newValue
                             + "' onclick='ZaZimbraAdmin.unloadHackCallback();'> "
 										+ com_zimbra_bulkprovision.download_csv + "</a> "
                     }
                 },
-                 /*
-                { type: _ANCHOR_,  isNewWindow: true, href: "adminres" ,
-                    label: com_zimbra_bulkprovision.download_csv, labelLocation:_NONE_,
-                    onActivate: ZaBulkProvisionWizard.downloadBPStatus
-                }, */
                 { type:_SPACER_ , height: 10 },
-                { ref:ZaBulkProvision.A_provision_accounts, type:_DWT_LIST_, height:"250", width:"525px",
-                    forceUpdate: true, cssClass: "DLSource",
-                    widgetClass: ZaBulkProvisionAccountsListView,
-                    headerList:bpAccountsListHeader, hideHeader: false
+                {type:_GROUP_, colSpan: 2, numCols: 1,
+                    items: [
+                        { ref:ZaBulkProvision.A_provision_accounts, type:_DWT_LIST_, height:(AjxEnv.isIE ? 270 : 260), width:525,
+                            forceUpdate: true, cssClass: "DLSource",
+                            widgetClass: ZaBulkProvisionAccountsListView,
+                            headerList:bpAccountsListHeader, hideHeader: false
+                        }
+                    ]
                 }
             ]
 		}
