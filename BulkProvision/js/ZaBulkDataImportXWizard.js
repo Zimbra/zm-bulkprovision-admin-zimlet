@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Server
- * Copyright (C) 2010, 2011 VMware, Inc.
+ * Copyright (C) 2008, 2009, 2010 Zimbra, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -71,6 +71,9 @@ function(entry) {
 		this._containedObject[ZaBulkProvision.A2_sourceType] = ZaBulkProvision.SOURCE_TYPE_XML;
 		this.goPage(ZaBulkDataImportXWizard.STEP_FILE_UPLOAD);
 	}	*/
+    if(entry._uuid) {
+        this._containedObject._uuid = entry._uuid;
+    }
 	this._localXForm.setInstance(this._containedObject);
 	if(this._containedObject[ZaModel.currentStep] > 0)
 		this.goPage(this._containedObject[ZaModel.currentStep]);
