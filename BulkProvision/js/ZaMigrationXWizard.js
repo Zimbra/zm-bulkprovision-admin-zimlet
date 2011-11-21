@@ -1,7 +1,7 @@
 /*
  * ***** BEGIN LICENSE BLOCK *****
  * Zimbra Collaboration Suite Server
- * Copyright (C) 2008, 2009, 2010 Zimbra, Inc.
+ * Copyright (C) 2010, 2011 VMware, Inc.
  * 
  * The contents of this file are subject to the Zimbra Public License
  * Version 1.3 ("License"); you may not use this file except in
@@ -309,14 +309,11 @@ function() {
 **/
 ZaMigrationXWizard.prototype.setObject =
 function(entry) {
-	this._containedObject = new ZaBulkProvision();
+	this._containedObject = new Object();
 	this._containedObject = entry ;
 
 	this._containedObject[ZaModel.currentStep] = ZaMigrationXWizard.STEP_INTRODUCTION;
 	this._containedObject[ZaBulkProvision.A_mustChangePassword] = "TRUE";
-    if(entry._uuid) {
-        this._containedObject._uuid = entry._uuid;
-    }
     this._localXForm.setInstance(this._containedObject);
 }
 
