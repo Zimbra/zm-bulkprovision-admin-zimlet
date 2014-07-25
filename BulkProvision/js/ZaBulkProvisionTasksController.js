@@ -52,9 +52,7 @@ function () {
 	if(ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] == 'TRUE') {
 		showBulkProvision = true;
 	} else {
-		showBulkProvision = ZaSettings.targetRights[ZaItem.DOMAIN]
-			&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_ACCOUNT]
-			&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_ACCOUNT].length > 0;
+		showBulkProvision = ZaZimbraAdmin.canCreateAccount();
 	}	
 	if(showBulkProvision) {    	
 		this._toolbarOperations[ZaOperation.BULK_DATA_IMPORT]=new ZaOperation(ZaOperation.BULK_DATA_IMPORT,com_zimbra_bulkprovision.TB_IMAP_Import, com_zimbra_bulkprovision.TB_IMAP_Import_tt, "ApplianceMigration", "ApplianceMigration", new AjxListener(this, this.bulkDataImportListener));
@@ -79,9 +77,7 @@ function () {
 	if(ZaSettings.HAVE_MORE_DOMAINS || ZaZimbraAdmin.currentAdminAccount.attrs[ZaAccount.A_zimbraIsAdminAccount] == 'TRUE') {
 		showBulkProvision = true;
 	} else {
-		showBulkProvision = ZaSettings.targetRights[ZaItem.DOMAIN]
-			&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_ACCOUNT]
-			&& ZaSettings.targetRights[ZaItem.DOMAIN][ZaDomain.RIGHT_CREATE_ACCOUNT].length > 0;
+		showBulkProvision = ZaZimbraAdmin.canCreateAccount();
 	}
 	if(showBulkProvision) {
 		this._popupOperations[ZaOperation.BULK_DATA_IMPORT]=new ZaOperation(ZaOperation.BULK_DATA_IMPORT,com_zimbra_bulkprovision.TB_IMAP_Import, com_zimbra_bulkprovision.TB_IMAP_Import_tt, "ApplianceMigration", "ApplianceMigration", new AjxListener(this, this.bulkDataImportListener));
