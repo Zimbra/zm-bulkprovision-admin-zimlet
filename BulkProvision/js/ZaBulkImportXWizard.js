@@ -494,7 +494,7 @@ ZaBulkImportXWizard.prototype.generateBulkFileCallback = function(params, resp) 
                     format = ZaBulkProvision.FILE_FORMAT_BULK_CSV;
                 }
                 this._localXForm.setInstanceValue(AjxMessageFormat.format(
-                        "{0}//{1}:{2}/service/afd/?action=getBulkFile&fileID={3}&fileFormat={4}", [ location.protocol,
+                        "{0}//{1}:{2}/service/extension/com_zimbra_bulkprovision/bulkdownload?action=getBulkFile&fileID={3}&fileFormat={4}", [ location.protocol,
                                 location.hostname, location.port, response.fileToken[0]._content, format ]),
                         ZaBulkProvision.A2_generatedFileLink);
                 this.goPage(ZaBulkImportXWizard.STEP_DOWNLOAD_FILE);
@@ -631,12 +631,12 @@ ZaBulkImportXWizard.prototype.processBulkImportResponse = function(response) {
     if (status == ZaBulkProvision.iSTATUS_FINISHED || status == ZaBulkProvision.iSTATUS_ABORTED
             || status == ZaBulkProvision.iSTATUS_ERROR) {
         sucessFileLink = AjxMessageFormat.format(
-                "{0}//{1}:{2}/service/afd/?action=getBulkFile&fileID={3}&fileFormat=reportcsv", [ location.protocol,
+                "{0}//{1}:{2}/service/extension/com_zimbra_bulkprovision/bulkdownload?action=getBulkFile&fileID={3}&fileFormat=reportcsv", [ location.protocol,
                         location.hostname, location.port, fileToken ]);
 
         if (errorCount > 0) {
             errorsFileLink = AjxMessageFormat.format(
-                    "{0}//{1}:{2}/service/afd/?action=getBulkFile&fileID={3}&fileFormat=errorscsv", [
+                    "{0}//{1}:{2}/service/extension/com_zimbra_bulkprovision/bulkdownload?action=getBulkFile&fileID={3}&fileFormat=errorscsv", [
                             location.protocol, location.hostname, location.port, fileToken ]);
         }
     }

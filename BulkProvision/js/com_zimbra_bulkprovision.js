@@ -198,6 +198,6 @@ if (ZaSettings && ZaSettings.EnabledZimlet["com_zimbra_bulkprovision"]) {
             queryString += "&types=" + AjxStringUtil.urlComponentEncode(this.searchTypes.join(","));
         }
 
-        window.open("/service/afd/" + queryString);
+        window.open("/service/extension/com_zimbra_bulkprovision/bulkdownload" + queryString);
     }
 }
