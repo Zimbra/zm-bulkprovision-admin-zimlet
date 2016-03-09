@@ -257,24 +257,28 @@ ZaBulkImportXWizard.prototype.goNext = function() {
         }
 
         // 2. Upload the files
-        this.setUploadManager(new AjxPost(this.getUploadFrameId()));
-        var xmlUploadCallback = new AjxCallback(this, this._uploadCallback);
-        var um = this.getUploadManager();
-        window._uploadManager = um;
         try {
             this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(false);
             this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
             this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(false);
             this._button[DwtDialog.CANCEL_BUTTON].setEnabled(true);
-            um.execute(xmlUploadCallback, document.getElementById(ZaBulkImportXWizard.xmlUploadFormId));
+            var xmlUploadCallback = new AjxCallback(this, this._uploadCallback);
+            if(AjxEnv.supportsHTML5File) {
+                var uploader = new ZaUploader();
+                uploader.upload(ZaBulkImportXWizard.attachmentInputId, appContextPath + "/../service/upload?fmt=extended,raw",  xmlUploadCallback);
+            } else {
+                this.setUploadManager(new AjxPost(this.getUploadFrameId()));
+                var um = this.getUploadManager();
+                window._uploadManager = um;
+                um.execute(xmlUploadCallback, document.getElementById(ZaBulkImportXWizard.xmlUploadFormId));
+            }
         } catch (err) {
             this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(false);
             this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(true);
             this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(true);
             this._button[DwtDialog.CANCEL_BUTTON].setEnabled(true);
-            ZaApp.getInstance().getCurrentController().popupErrorDialog(com_zimbra_bulkprovision.error_no_bulk_file_specified);
+            ZaApp.getInstance().getCurrentController().popupErrorDialog((err && err.msg) ? err.msg : com_zimbra_bulkprovision.error_no_bulk_file_specified);
         }
-
     } else if (cStep == ZaBulkImportXWizard.STEP_REVIEW) {
         /**
          * Start import

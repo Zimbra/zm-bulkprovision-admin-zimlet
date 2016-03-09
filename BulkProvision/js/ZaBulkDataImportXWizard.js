@@ -32,6 +32,7 @@ function ZaBulkDataImportXWizard(parent, entry) {
     ZaXWizardDialog.call(this, parent, null, com_zimbra_bulkprovision.BulkDataImport_Wiz_title, w, (AjxEnv.isIE ? "330px" : "320px"), "ZaBulkDataImportXWizard");
 
     ZaBulkDataImportXWizard.xmlUploadFormId = Dwt.getNextId();
+    ZaBulkDataImportXWizard.attachmentInputId = Dwt.getNextId();
     this.stepChoices = [ {
         label : com_zimbra_bulkprovision.DataImport_Wizard_Intro,
         value : ZaBulkDataImportXWizard.STEP_INTRODUCTION
@@ -440,18 +441,23 @@ ZaBulkDataImportXWizard.prototype.goNext = function() {
         }
 
         // 2. Upload the files
-        this.setUploadManager(new AjxPost(this.getUploadFrameId()));
-        var xmlUploadCallback = new AjxCallback(this, this._uploadCallback);
-        var um = this.getUploadManager();
-        window._uploadManager = um;
         try {
-            this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(false);
-            this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
-            this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(false);
-            this._button[DwtDialog.CANCEL_BUTTON].setEnabled(true);
-            um.execute(xmlUploadCallback, document.getElementById(ZaBulkDataImportXWizard.xmlUploadFormId));
+            var xmlUploadCallback = new AjxCallback(this, this._uploadCallback);
+            if (AjxEnv.supportsHTML5File) {
+                var uploader = new ZaUploader();
+                uploader.upload(ZaBulkDataImportXWizard.attachmentInputId, appContextPath + "/../service/upload?fmt=extended,raw", xmlUploadCallback);
+            } else {
+                this.setUploadManager(new AjxPost(this.getUploadFrameId()));
+                var um = this.getUploadManager();
+                window._uploadManager = um;
+                this._button[DwtWizardDialog.FINISH_BUTTON].setEnabled(false);
+                this._button[DwtWizardDialog.NEXT_BUTTON].setEnabled(false);
+                this._button[DwtWizardDialog.PREV_BUTTON].setEnabled(false);
+                this._button[DwtDialog.CANCEL_BUTTON].setEnabled(true);
+                um.execute(xmlUploadCallback, document.getElementById(ZaBulkDataImportXWizard.xmlUploadFormId));
+            }
         } catch (err) {
-            this._app.getCurrentController().popupErrorDialog(com_zimbra_bulkprovision.error_no_bulk_file_specified);
+            this._app.getCurrentController().popupErrorDialog((err && err.msg) ? err.msg : com_zimbra_bulkprovision.error_no_bulk_file_specified);
         }
     } else if (cStep == ZaBulkDataImportXWizard.STEP_ACCT_PICKER) {
         if (AjxUtil.isEmpty(this._containedObject[ZaBulkProvision.A2_account])) {
@@ -602,7 +608,7 @@ ZaBulkDataImportXWizard.isAccountSourceLDAP = function() {
     return (val == ZaBulkProvision.SOURCE_TYPE_LDAP);
 }
 
-ZaBulkDataImportXWizard.getUploadFormHtml = function() {
+ZaBulkDataImportXWizard.getUploadFormHtml = function (){
     var uri = appContextPath + "/../service/upload";
     var html = [];
     var idx = 0;
@@ -610,10 +616,12 @@ ZaBulkDataImportXWizard.getUploadFormHtml = function() {
     html[idx++] = uri;
     html[idx++] = "' id='";
     html[idx++] = ZaBulkDataImportXWizard.xmlUploadFormId;
-    html[idx++] = "' enctype='multipart/form-data'>";
-    html[idx++] = "<div><table border=0 cellspacing=0 cellpadding=2 style='table-layout: fixed;'> ";
+    html[idx++] = "' enctype='multipart/form-data'>" ;
+    html[idx++] = "<div><table border=0 cellspacing=0 cellpadding=2 style='table-layout: fixed;'> " ;
     html[idx++] = "<tbody><tr><td width=65>" + com_zimbra_bulkprovision.XML_Upload_file + "</td>";
-    html[idx++] = "<td><input type=file  name='xmlFile' size='45'></input></td></tr>";
+    html[idx++] = "<td><input type=file  name='bulkFile' size='45' id='";
+    html[idx++] = ZaBulkDataImportXWizard.attachmentInputId;
+    html[idx++] = "'></input></form></td></tr>";
     html[idx++] = "</tbody></table></div>";
     html[idx++] = "</form></div>";
     return html.join("");
