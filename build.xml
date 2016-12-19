@@ -44,4 +44,7 @@
 	<!-- deploy the extension -->
     <target name="deploy" depends="deploy-zimlet" description="Deploy the extension"/>
 	
+	<!-- empty jar target used in publish-local of ant-global.xml -->
+	<target name="jar"></target>
+
 </project>
