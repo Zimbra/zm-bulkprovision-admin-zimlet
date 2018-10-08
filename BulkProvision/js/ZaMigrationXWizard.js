@@ -90,7 +90,7 @@ ZaMigrationXWizard.prototype.generateBulkFileCallback = function(params, resp) {
             var response = resp.getResponse().Body.GenerateBulkProvisionFileFromLDAPResponse;
             if (response.fileToken && response.fileToken[0] && response.fileToken[0]._content) {
                 this._localXForm.setInstanceValue(AjxMessageFormat.format(
-                        "{0}//{1}:{2}/service/extension/com_zimbra_bulkprovision/bulkdownload?action=getBulkFile&fileID={3}&fileFormat={4}", [ location.protocol,
+                        "{0}//{1}:{2}/service/extension/com_zimbra_bulkprovision/bulkdownload?fileID={3}&fileFormat={4}", [ location.protocol,
                                 location.hostname, location.port, response.fileToken[0]._content,
                                 ZaBulkProvision.FILE_FORMAT_MIGRATION_XML ]), ZaBulkProvision.A2_generatedFileLink);
                 this.goPage(ZaMigrationXWizard.STEP_DOWNLOAD_FILE);

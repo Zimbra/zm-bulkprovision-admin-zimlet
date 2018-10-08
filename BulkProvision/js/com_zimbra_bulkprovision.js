@@ -187,7 +187,7 @@ if (ZaSettings && ZaSettings.EnabledZimlet["com_zimbra_bulkprovision"]) {
         //TODO: need to filter out non account items, such as domain, etc.
         if (window.console && window.console.log)
             window.console.log("Download all the search result accounts ...");
-        var queryString = "?action=getSR";
+        var queryString = "";
         if (this._currentQuery) {
             queryString += "&q=" + AjxStringUtil.urlComponentEncode(this._currentQuery);
         }
@@ -200,6 +200,7 @@ if (ZaSettings && ZaSettings.EnabledZimlet["com_zimbra_bulkprovision"]) {
             queryString += "&types=" + AjxStringUtil.urlComponentEncode(this.searchTypes.join(","));
         }
 
-        window.open("/service/extension/com_zimbra_bulkprovision/bulkdownload" + queryString);
+        queryString = queryString.replace(/^&/, "?");
+        window.open("/service/extension/com_zimbra_bulkprovision/search_results_download" + queryString);
     }
 }
